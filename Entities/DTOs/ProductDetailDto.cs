@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using Core.Entities;
 
-namespace Entities.Concerete
+namespace Entities.DTOs
 {
-    public class Product:IEntity
+    //Data Transformation Object
+    public class ProductDetailDto : IDto
     {
         public int ProductId { get; set; }
-        public int  CategoryId { get; set; }
         public string ProductName { get; set; }
+        public string CategoryName { get; set; }
         public short UnitsInStock { get; set; }
-        public Decimal UnitPrice { get; set; }
+
     }
 }

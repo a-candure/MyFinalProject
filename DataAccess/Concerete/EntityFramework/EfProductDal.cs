@@ -3,38 +3,34 @@ using System.Collections.Generic;
 using System.Text;
 using DataAccess.Abstract;
 using Entities.Concerete;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Linq.Expressions;
+using Core.DataAccess.EntityFramework;
+using Entities.DTOs;
 
 namespace DataAccess.Concerete.EntityFramework
 {
-    public class EfProductDal : IProductDal
+    public class EfProductDal : EfEntityRepositoryBase<Product, NorthwindContext>, IProductDal
     {
-        public List<Product> GetAll()
+        public List<ProductDetailDto> GetProductDetails()
         {
-            return new List<Product>
-                {
-                    new Product{ProductName = "Tablo"},
-                    new Product{ProductName = "Su"}
-                };
-        }
+            using (NorthwindContext context = new NorthwindContext())
+            {
+                var result = from p in context.Products
+                             join c in context.Categories
+                             on p.CategoryId equals c.CategoryId
+                             select new ProductDetailDto()
+                             {
+                                 ProductId = p.ProductId,
+                                 ProductName = p.ProductName,
+                                 CategoryName = c.CategoryName,
+                                 UnitsInStock = p.UnitsInStock
+                             };
+                return result.ToList();
 
-        public void Add(Product product)
-        {
-            throw new NotImplementedException();
-        }
 
-        public void Update(Product product)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Delete(Product product)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Product> GetAllByCategory(int categoryId)
-        {
-            throw new NotImplementedException();
+            }
         }
     }
 }
