@@ -1,7 +1,8 @@
-﻿using Entities.Concerete;
+﻿using Core.Entities.Concrete;
+using Entities.Concerete;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAccess.Concerete.EntityFramework
+namespace DataAccess.Concrete.EntityFramework
 {
     //context: Db tabloları ile proje class'larını bağlamak
     public class NorthwindContext : DbContext
@@ -15,7 +16,9 @@ namespace DataAccess.Concerete.EntityFramework
         public DbSet<Category> Categories { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
-        
+        public DbSet<OperationClaim> OperationClaims { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
 
     }
 }

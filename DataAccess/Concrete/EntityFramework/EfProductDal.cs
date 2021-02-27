@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
 using Core.DataAccess.EntityFramework;
+using DataAccess.Concrete.EntityFramework;
 using Entities.DTOs;
 
 namespace DataAccess.Concerete.EntityFramework

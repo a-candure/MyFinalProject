@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security;
 using Business.Abstract;
 using Business.CCS;
 using Business.Constants;
@@ -15,6 +17,7 @@ using DataAccess.Concerete.InMemory;
 using Entities.Concerete;
 using Entities.DTOs;
 using FluentValidation;
+using Business.BusinessAspects.Autofac;
 
 
 namespace Business.Concerete
@@ -31,7 +34,8 @@ namespace Business.Concerete
 
         }
 
-
+        //Claim 
+        [SecuredOperation("product.Add,Editor")]
         [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
