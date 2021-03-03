@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Security;
+using System.Transactions;
 using Business.Abstract;
-using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspect.Autofac.Validation;
@@ -18,6 +17,8 @@ using Entities.Concerete;
 using Entities.DTOs;
 using FluentValidation;
 using Business.BusinessAspects.Autofac;
+using Core.Aspect.Autofac.Caching;
+using Core.Aspect.Autofac.Transaction;
 
 
 namespace Business.Concerete
@@ -35,14 +36,16 @@ namespace Business.Concerete
         }
 
         //Claim 
-        [SecuredOperation("product.Add,Editor")]
+        [SecuredOperation("product.add,editor")]
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]
+
         public IResult Add(Product product)
         {
             // Aynı isimde ürün eklenemez.
             //Eğer mevcut kategori sayısı 15 i geçtiyse sisteme yeni ürün eklenemez
-            IResult result = BusinessRules.Run(CheckIfProductNameExists(product.ProductName)
-                ,CheckIfProductCountOfCategoryCorrect(product.ProductId),CheckIfCategoryLimitExceded());
+            IResult result = BusinessRules.Run(CheckIfProductNameExists(product.ProductName),
+                CheckIfProductCountOfCategoryCorrect(product.ProductId), CheckIfCategoryLimitExceded());
 
             if (result != null)
             {
@@ -53,9 +56,8 @@ namespace Business.Concerete
             return new SuccessResult(Messages.ProductAdded);
         }
 
-
-
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Update(Product product)
         {
             var result = _productDal.GetAll(P => P.CategoryId == product.CategoryId).Count;
@@ -67,6 +69,8 @@ namespace Business.Concerete
             return new SuccessResult(Messages.ProductAdded);
         }
 
+
+        [CacheAspect]  //key, Value
         public IDataResult<List<Product>> GetAll()
         {
             if (DateTime.Now.Hour == 1)
@@ -75,7 +79,6 @@ namespace Business.Concerete
             }
 
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(), Messages.ProductListed);
-
         }
 
         public IDataResult<List<Product>> GetAllByCategoryId(int id)
@@ -98,6 +101,8 @@ namespace Business.Concerete
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetails());
         }
 
+        [CacheAspect]
+        //[PerformanceAspect(5)]
         public IDataResult<Product> GetById(int productId)
         {
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == productId));
@@ -134,6 +139,20 @@ namespace Business.Concerete
             }
 
             return new SuccessResult();
+        }
+
+        [TransactionScopeAspect]
+        public IResult AddTransactionalTest(Product product)
+        {
+            Add(product);
+            if (product.UnitPrice < 10)
+            {
+                throw new Exception("");
+            }
+
+            Add(product);
+
+            return null;
         }
     }
 }

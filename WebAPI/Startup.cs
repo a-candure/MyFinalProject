@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Business.Abstract;
 using Business.Concerete;
+using Core.DependencyResolvers;
 using Core.Utilities.IoC;
 using Core.Utilities.Security.Encryption;
 using DataAccess.Abstract;
@@ -19,6 +20,8 @@ using DataAccess.Concerete.EntityFramework;
 using Core.Utilities.Security.JWT;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+using Core.Extensions;
 
 namespace WebAPI
 {
@@ -37,9 +40,14 @@ namespace WebAPI
             // AOP 
             // Autofac, Ninject, CastleWindsor, StructureMap, LightInject, DryEnject --> IoC Container
             //AOP
+            //postsharp
+            
             services.AddControllers();
             //services.AddSingleton<IProductService, ProductManager>();
             //services.AddSingleton<IProductDal, EfProductDal>();
+
+            
+
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -56,7 +64,10 @@ namespace WebAPI
                         IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
                     };
                 });
-            ServiceTool.Create(services);
+            services.AddDependencyResolvers(new ICoreModule[]
+            {
+                new CoreModule()
+            });
 
         }
 
