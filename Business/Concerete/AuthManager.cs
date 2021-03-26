@@ -65,7 +65,7 @@ namespace Business.Concerete
         {
             var claims = _userService.GetClaims(user);
             var accessToken = _tokenHelper.CreateToken(user, claims);
-            return new SuccessDataResult<AccessToken>(accessToken, "Token oluşturuldu");
+            return new SuccessDataResult<AccessToken>(accessToken, "Giriş Başarılı");
         }
     }
 }

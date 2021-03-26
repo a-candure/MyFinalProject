@@ -38,8 +38,7 @@ namespace WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             // AOP 
-            // Autofac, Ninject, CastleWindsor, StructureMap, LightInject, DryEnject --> IoC Container
-            //AOP
+            // Autofac, Ninject, CastleWindsor, StructureMap, LightInject, DryEnject --> IoC Container //AOP
             //postsharp
             
             services.AddControllers();
@@ -79,6 +78,8 @@ namespace WebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.ConfigureCustomExceptionMiddleware();
 
             app.UseCors(builder=>builder.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyOrigin());
 

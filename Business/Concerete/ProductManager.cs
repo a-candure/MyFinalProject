@@ -36,10 +36,9 @@ namespace Business.Concerete
         }
 
         //Claim 
-        [SecuredOperation("product.add,editor")]
+        [SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidator))]
         [CacheRemoveAspect("IProductService.Get")]
-
         public IResult Add(Product product)
         {
             // Aynı isimde ürün eklenemez.
@@ -73,7 +72,7 @@ namespace Business.Concerete
         [CacheAspect]  //key, Value
         public IDataResult<List<Product>> GetAll()
         {
-            if (DateTime.Now.Hour == 1)
+            if (DateTime.Now.Hour == 5)
             {
                 return new ErrorDataResult<List<Product>>(Messages.MaintenanceTime);
             }

@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Entities.Concerete;
 using System.Collections.Generic;
+using Business.Constants;
 using Core.Utilities.results;
 using DataAccess.Abstract;
 
@@ -17,8 +18,7 @@ namespace Business.Concerete
 
         public IDataResult<List<Category>> GetAll()
         {
-            // iş kodları
-            return new SuccessDataResult<List<Category>>(_categoryDal.GetAll());
+            return new SuccessDataResult<List<Category>>(_categoryDal.GetAll(), Messages.CategoryListed);
         }
 
         // select * from Categories where categoryId= 3
